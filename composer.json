@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "armandsar/laravel-mcp-documentation-generator",
+    "description": "This is my package laravel-mcp-documentation-generator",
     "keywords": [
-        ":vendor_name",
+        "armandsar",
         "laravel",
-        ":package_slug"
+        "laravel-mcp-documentation-generator"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/armandsar/laravel-mcp-documentation-generator",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Armands Leinieks",
+            "email": "armands.leinieks@gmail.com",
             "role": "Developer"
         }
     ],
@@ -30,18 +30,17 @@
         "pestphp/pest-plugin-laravel": "^4.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0",
-        "spatie/laravel-ray": "^1.35"
+        "phpstan/phpstan-phpunit": "^2.0"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "Sezy\\LaravelMcpDocumentationGenerator\\": "src/",
+            "Sezy\\LaravelMcpDocumentationGenerator\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "Sezy\\LaravelMcpDocumentationGenerator\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,10 +62,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "Sezy\\LaravelMcpDocumentationGenerator\\LaravelMcpDocumentationGeneratorServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "LaravelMcpDocumentationGenerator": "Sezy\\LaravelMcpDocumentationGenerator\\Facades\\LaravelMcpDocumentationGenerator"
             }
         }
     },
