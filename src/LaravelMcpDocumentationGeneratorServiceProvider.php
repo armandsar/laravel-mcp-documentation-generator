@@ -2,9 +2,9 @@
 
 namespace Sezy\LaravelMcpDocumentationGenerator;
 
+use Sezy\LaravelMcpDocumentationGenerator\Commands\LaravelMcpDocumentationGeneratorCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Sezy\LaravelMcpDocumentationGenerator\Commands\LaravelMcpDocumentationGeneratorCommand;
 
 class LaravelMcpDocumentationGeneratorServiceProvider extends PackageServiceProvider
 {
