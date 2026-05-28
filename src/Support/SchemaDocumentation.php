@@ -10,6 +10,15 @@ class SchemaDocumentation
      */
     public static function fields(array $schema): array
     {
+        return self::schemaFields($schema);
+    }
+
+    /**
+     * @param  array<string, mixed>  $schema
+     * @return array<int, array{name: string, type: string, description: string, required: bool}>
+     */
+    protected static function schemaFields(array $schema, string $prefix = ''): array
+    {
         $properties = self::stringKeyedArray($schema['properties'] ?? null);
 
         if ($properties === null) {
@@ -27,15 +36,57 @@ class SchemaDocumentation
                 continue;
             }
 
+            $fieldName = $prefix.$name;
+
             $fields[] = [
-                'name' => $name,
+                'name' => $fieldName,
                 'type' => self::type($property),
                 'description' => is_string($property['description'] ?? null) ? $property['description'] : '',
                 'required' => in_array($name, $required, true),
             ];
+
+            array_push($fields, ...self::nestedFields($property, $fieldName));
         }
 
         return $fields;
+    }
+
+    /**
+     * @param  array<string, mixed>  $property
+     * @return array<int, array{name: string, type: string, description: string, required: bool}>
+     */
+    protected static function nestedFields(array $property, string $fieldName): array
+    {
+        if (($property['type'] ?? null) === 'array') {
+            $items = self::stringKeyedArray($property['items'] ?? null);
+
+            if ($items !== null) {
+                return self::arrayItemFields($items, $fieldName.'[]');
+            }
+        }
+
+        if (($property['type'] ?? null) === 'object') {
+            return self::schemaFields($property, $fieldName.'.');
+        }
+
+        return [];
+    }
+
+    /**
+     * @param  array<string, mixed>  $items
+     * @return array<int, array{name: string, type: string, description: string, required: bool}>
+     */
+    protected static function arrayItemFields(array $items, string $fieldName): array
+    {
+        if (($items['type'] ?? null) === 'array') {
+            $nestedItems = self::stringKeyedArray($items['items'] ?? null);
+
+            if ($nestedItems !== null) {
+                return self::arrayItemFields($nestedItems, $fieldName.'[]');
+            }
+        }
+
+        return self::schemaFields($items, $fieldName.'.');
     }
 
     /**
