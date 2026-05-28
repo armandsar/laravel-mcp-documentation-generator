@@ -2,21 +2,12 @@
 
 namespace Sezy\LaravelMcpDocumentationGenerator\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Routing\RouteCollection;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Sezy\LaravelMcpDocumentationGenerator\LaravelMcpDocumentationGeneratorServiceProvider;
 
 class TestCase extends Orchestra
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Sezy\\LaravelMcpDocumentationGenerator\\Database\\Factories\\'.class_basename($modelName).'Factory'
-        );
-    }
-
     protected function getPackageProviders($app)
     {
         return [
@@ -24,14 +15,20 @@ class TestCase extends Orchestra
         ];
     }
 
-    public function getEnvironmentSetUp($app)
+    protected function defineEnvironment($app): void
     {
-        config()->set('database.default', 'testing');
+        $app['config']->set('mcp-documentation-generator.enabled', true);
+        $app['config']->set('database.default', 'testing');
+    }
 
-        /*
-         foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__ . '/../database/migrations') as $migration) {
-            (include $migration->getRealPath())->up();
-         }
-         */
+    public function reloadDocumentationRoutesWithConfig(array $config): void
+    {
+        foreach ($config as $key => $value) {
+            config()->set('mcp-documentation-generator.'.$key, $value);
+        }
+
+        $this->app['router']->setRoutes(new RouteCollection);
+
+        require __DIR__.'/../routes/web.php';
     }
 }

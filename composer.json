@@ -1,10 +1,12 @@
 {
     "name": "armandsar/laravel-mcp-documentation-generator",
-    "description": "This is my package laravel-mcp-documentation-generator",
+    "description": "Generate rich HTML documentation for Laravel MCP web servers.",
     "keywords": [
         "armandsar",
         "laravel",
-        "laravel-mcp-documentation-generator"
+        "laravel-mcp-documentation-generator",
+        "mcp",
+        "documentation"
     ],
     "homepage": "https://github.com/armandsar/laravel-mcp-documentation-generator",
     "license": "MIT",
@@ -16,32 +18,34 @@
         }
     ],
     "require": {
-        "php": "^8.4",
-        "spatie/laravel-package-tools": "^1.16",
-        "illuminate/contracts": "^11.0||^12.0||^13.0"
+        "php": "^8.2",
+        "ext-json": "*",
+        "illuminate/container": "^12.0||^13.0",
+        "illuminate/contracts": "^12.0||^13.0",
+        "illuminate/routing": "^12.0||^13.0",
+        "illuminate/support": "^12.0||^13.0",
+        "laravel/mcp": "^0.7.0",
+        "spatie/laravel-package-tools": "^1.16"
     },
     "require-dev": {
         "laravel/pint": "^1.14",
         "nunomaduro/collision": "^8.8",
         "larastan/larastan": "^3.0",
-        "orchestra/testbench": "^11.0.0||^10.0.0||^9.0.0",
-        "pestphp/pest": "^4.0",
-        "pestphp/pest-plugin-arch": "^4.0",
-        "pestphp/pest-plugin-laravel": "^4.0",
+        "orchestra/testbench": "^10.0.0||^11.0.0",
+        "pestphp/pest": "^3.8||^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0||^4.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0"
     },
     "autoload": {
         "psr-4": {
-            "Sezy\\LaravelMcpDocumentationGenerator\\": "src/",
-            "Sezy\\LaravelMcpDocumentationGenerator\\Database\\Factories\\": "database/factories/"
+            "Sezy\\LaravelMcpDocumentationGenerator\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Sezy\\LaravelMcpDocumentationGenerator\\Tests\\": "tests/",
-            "Workbench\\App\\": "workbench/app/"
+            "Sezy\\LaravelMcpDocumentationGenerator\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -63,12 +67,7 @@
         "laravel": {
             "providers": [
                 "Sezy\\LaravelMcpDocumentationGenerator\\LaravelMcpDocumentationGeneratorServiceProvider"
-            ],
-            "aliases": {
-                "LaravelMcpDocumentationGenerator": "Sezy\\LaravelMcpDocumentationGenerator\\Facades\\LaravelMcpDocumentationGenerator"
-            }
+            ]
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }
