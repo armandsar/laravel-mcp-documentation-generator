@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 use Laravel\Mcp\Facades\Mcp;
+use Laravel\Mcp\Server\Registrar;
 use Sezy\LaravelMcpDocumentationGenerator\Discovery\McpDocumentationRepository;
 use Sezy\LaravelMcpDocumentationGenerator\Tests\Fixtures\BootConfiguredMcpServer;
 use Sezy\LaravelMcpDocumentationGenerator\Tests\Fixtures\BrokenSchemaMcpServer;
@@ -35,6 +36,19 @@ it('discovers registered web mcp servers and their tools', function () {
         ->and($servers[1]['name'])->toBe('Other MCP')
         ->and($servers[1]['tools'][0]['anchor'])->toBe('tool-mcp-other-ping-other')
         ->and($servers[1]['tools'][0]['name'])->toBe('ping-other');
+});
+
+it('discovers web mcp servers from cached routes when the registrar is empty', function () {
+    app()->forgetInstance(Registrar::class);
+    Mcp::clearResolvedInstance(Registrar::class);
+
+    expect(Mcp::servers())->toBe([]);
+
+    $servers = app(McpDocumentationRepository::class)->servers();
+
+    expect($servers)->toHaveCount(2)
+        ->and($servers[0]['class'])->toBe(CompanyMcpServer::class)
+        ->and($servers[1]['class'])->toBe(OtherMcpServer::class);
 });
 
 it('filters servers by configured server class', function () {

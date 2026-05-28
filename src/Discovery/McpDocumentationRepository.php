@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Container\Container;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route as Router;
 use Illuminate\Support\Str;
 use Laravel\Mcp\Facades\Mcp;
 use Laravel\Mcp\Server;
@@ -44,11 +45,7 @@ class McpDocumentationRepository
         /** @var list<array{uri: string, path: string, url: string, class: class-string<Server>, anchor: string, name: string, version: string, instructions: string, tools: array<int, array<string, mixed>>}> $servers */
         $servers = [];
 
-        foreach (Mcp::servers() as $route) {
-            if (! $route instanceof Route) {
-                continue;
-            }
-
+        foreach ($this->webServerRoutes() as $route) {
             $serverClass = $this->serverClassFromRoute($route);
 
             if ($serverClass === null || ! is_subclass_of($serverClass, Server::class)) {
@@ -67,6 +64,39 @@ class McpDocumentationRepository
         }
 
         return $servers;
+    }
+
+    /**
+     * @return list<Route>
+     */
+    protected function webServerRoutes(): array
+    {
+        $routes = [];
+        $discoveredUris = [];
+
+        foreach (Mcp::servers() as $route) {
+            if (! $route instanceof Route) {
+                continue;
+            }
+
+            $routes[] = $route;
+            $discoveredUris[$route->uri()] = true;
+        }
+
+        foreach (Router::getRoutes()->getRoutes() as $route) {
+            if (isset($discoveredUris[$route->uri()])) {
+                continue;
+            }
+
+            if ($this->serverClassFromRoute($route) === null) {
+                continue;
+            }
+
+            $routes[] = $route;
+            $discoveredUris[$route->uri()] = true;
+        }
+
+        return $routes;
     }
 
     /**
