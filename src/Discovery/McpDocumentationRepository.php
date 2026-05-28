@@ -5,6 +5,7 @@ namespace Sezy\LaravelMcpDocumentationGenerator\Discovery;
 use Closure;
 use Illuminate\Container\Container;
 use Illuminate\Routing\Route;
+use Illuminate\Routing\RouteAction;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route as Router;
 use Illuminate\Support\Str;
@@ -106,17 +107,53 @@ class McpDocumentationRepository
     {
         $uses = $route->getAction('uses');
 
-        if (! $uses instanceof Closure) {
-            return null;
+        if ($uses instanceof Closure) {
+            return $this->serverClassFromClosure($uses);
         }
 
-        foreach ((new ReflectionFunction($uses))->getStaticVariables() as $value) {
+        if (is_string($uses) && RouteAction::containsSerializedClosure(['uses' => $uses])) {
+            return $this->serverClassFromSerializedClosure($uses);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return class-string<Server>|null
+     */
+    protected function serverClassFromClosure(Closure $closure): ?string
+    {
+        foreach ((new ReflectionFunction($closure))->getStaticVariables() as $value) {
             if (is_string($value) && is_subclass_of($value, Server::class)) {
                 return $value;
             }
         }
 
         return null;
+    }
+
+    /**
+     * @return class-string<Server>|null
+     */
+    protected function serverClassFromSerializedClosure(string $uses): ?string
+    {
+        try {
+            $serializedClosure = unserialize($uses);
+        } catch (Throwable) {
+            return null;
+        }
+
+        if (! is_object($serializedClosure) || ! method_exists($serializedClosure, 'getClosure')) {
+            return null;
+        }
+
+        $closure = $serializedClosure->getClosure();
+
+        if (! $closure instanceof Closure) {
+            return null;
+        }
+
+        return $this->serverClassFromClosure($closure);
     }
 
     /**

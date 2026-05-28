@@ -38,7 +38,13 @@ it('discovers registered web mcp servers and their tools', function () {
         ->and($servers[1]['tools'][0]['name'])->toBe('ping-other');
 });
 
-it('discovers web mcp servers from cached routes when the registrar is empty', function () {
+it('discovers web mcp servers from serialized cached routes when the registrar is empty', function () {
+    foreach (app('router')->getRoutes()->getRoutes() as $route) {
+        if ($route->uri() === 'mcp/company' || $route->uri() === 'mcp/other') {
+            $route->prepareForSerialization();
+        }
+    }
+
     app()->forgetInstance(Registrar::class);
     Mcp::clearResolvedInstance(Registrar::class);
 
