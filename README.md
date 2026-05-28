@@ -17,7 +17,7 @@ composer require armandsar/laravel-mcp-documentation-generator
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-mcp-documentation-generator-config"
+php artisan vendor:publish --tag="mcp-documentation-generator-config"
 ```
 
 Contents of the published config file:
